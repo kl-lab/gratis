@@ -4,7 +4,7 @@
 \alias{generate_ts}
 \title{Generate time series from random parameter spaces of the mixture autoregressive (MAR) models.}
 \usage{
-generate_ts(n.ts = 1, freq = 1, nComp = NULL, n = 120)
+generate_ts(n.ts = 1, freq = 1, nComp = NULL, n = 120, output_format = "list")
 }
 \arguments{
 \item{n.ts}{number of time series to be generated.}
@@ -14,13 +14,16 @@ generate_ts(n.ts = 1, freq = 1, nComp = NULL, n = 120)
 \item{nComp}{number of mixing components when simulating time series using MAR models.}
 
 \item{n}{length of the generated time series.}
+
+\item{output_format}{An optional argument which allows to choose output format between "list" and "tsibble"}
 }
 \value{
 A list of time series together with the SARIMA coefficients used in each mixing
-component and the corresponding mixing weights.
+    component and the corresponding mixing weights.
 }
 \description{
-Generate time series from random parameter spaces of the mixture autoregressive (MAR) models.
+Generate time series from random parameter spaces of the mixture autoregressive (MAR)
+models.
 }
 \examples{
 x <- generate_ts(n.ts = 2, freq = 12, nComp = 2, n = 120)

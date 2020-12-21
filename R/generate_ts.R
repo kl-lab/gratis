@@ -6,6 +6,7 @@
 #' @param freq seasonal period of the time series to be generated.
 #' @param nComp number of mixing components when simulating time series using MAR models.
 #' @param n length of the generated time series.
+#' @param output_format An optional argument which allows to choose output format between "list" and "tsibble"
 #' @return A list of time series together with the SARIMA coefficients used in each mixing
 #'     component and the corresponding mixing weights.
 #' @author Yanfei Kang and Feng Li
@@ -15,7 +16,7 @@
 #' forecast::autoplot(x$N1$x)
 #' @references Wong, CS & WK Li (2000).
 #' @export
-generate_ts <- function(n.ts = 1, freq = 1, nComp = NULL, n = 120) {
+generate_ts <- function(n.ts = 1, freq = 1, nComp = NULL, n = 120, output_format="list") {
   count <- 1
   generated.mixture.data <- list()
   sigmas <- sample(c(1:5), 5, replace = TRUE)
@@ -105,7 +106,14 @@ generate_ts <- function(n.ts = 1, freq = 1, nComp = NULL, n = 120) {
       }
     }
   }
-  return(generated.mixture.data)
+  # New content
+  output <- if (output_format == "list") {
+    generated.mixture.data
+  } else if (output_format == "tsibble") {
+    x <-  generated.mixture.data
+    map(x,  ~ as_tsibble(.x$x))
+  }
+  return(output)
 }
 
 
@@ -116,12 +124,13 @@ generate_ts <- function(n.ts = 1, freq = 1, nComp = NULL, n = 120) {
 #' @param seasonal.periods a vector of seasonal periods of the time series to be generated.
 #' @param n length of the generated time series.
 #' @param nComp number of mixing components when simulating time series using MAR models.
+#' @param output_format An optional argument which allows to choose output format between "list" and "tsibble"
 #' @return a time series with multiple seasonal periods.
 #' @export
 #' @examples
-#' x <- generate_msts(seasonal.periods = c(7, 365), n = 800, nComp = 2)
+#' x <- generate_msts(seasonal.periods = c(7, 365), n = 800, nComp = 2, output_format= "list")
 #' forecast::autoplot(x)
-generate_msts <- function(seasonal.periods = c(7, 365), n = 800, nComp = NULL) {
+generate_msts <- function(seasonal.periods = c(7, 365), n = 800, nComp = NULL,output_format="list") {
   x.list <- map(seasonal.periods, function(p) {
     generate_ts(n.ts = 1, freq = p, n = n, nComp = nComp)$N1$x
   })
@@ -136,7 +145,13 @@ generate_msts <- function(seasonal.periods = c(7, 365), n = 800, nComp = NULL) {
     mutate(x = rowSums(.)) %>%
     select(x) %>%
     msts(seasonal.periods = seasonal.periods)
-  return(res)
+  # New content
+  output <- if (output_format == "list") {
+    res
+  } else if (output_format == "tsibble") {
+    as_tsibble(res)
+  }
+  return(output)
 }
 
 # ===========================================================================
