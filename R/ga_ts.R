@@ -1,62 +1,59 @@
-#' A revised version of genetic algorithms (R package `GA`) to allow for time series
-#' generation.
-#'
-#' @param type the type of genetic algorithm to be run depending on the nature of decision
-#'     variables.
-#' @param fitness the fitness function, any allowable R function which takes as input an
-#'     individual string representing a potential solution, and returns a numerical value
-#'     describing its ``fitness``
-#' @param ... additional arguments to be passed to the fitness function.
-#' @param n Length of the time series to be generated.
-#' @param min a vector of length equal to the decision variables providing the lower
-#'     bounds of the search space in case of real-valued or permutation encoded
-#'     optimizations.
-#' @param max a vector of length equal to the decision variables providing the upper
-#'     bounds of the search space in case of real-valued or permutation encoded
-#'     optimizations.
-#' @param nBits a value specifying the number of bits to be used in binary encoded
-#'     optimizations.
-#' @param population an R function for randomly generating an initial population.
-#' @param selection an R function performing selection, i.e. a function which generates a
-#'     new population of individuals from the current population probabilistically
-#'     according to individual fitness.
-#' @param crossover an R function performing crossover, i.e. a function which forms
-#'     offsprings by combining part of the genetic information from their parents.
-#' @param mutation an R function performing mutation, i.e. a function which randomly
-#'     alters the values of some genes in a parent chromosome.
-#' @param popSize the population size.
-#' @param pcrossover the probability of crossover between pairs of chromosomes.
-#' @param pmutation the probability of mutation in a parent chromosome.
-#' @param elitism the number of best fitness individuals to survive at each generation.
-#' @param updatePop If set at TRUE the first attribute attached to the value returned by
-#'     the user-defined fitness function is used to update the population.
-#' @param postFitness a user-defined function which, if provided, receives the current
-#'     ga-class object as input, performs post fitness-evaluation steps, then returns an
-#'     updated version of the object which is used to update the GA search.
-#' @param maxiter the maximum number of iterations to run before the GA search is halted.
-#' @param run the number of consecutive generations without any improvement in the best
-#'     fitness value before the GA is stopped.
-#' @param maxFitness the upper bound on the fitness function after that the GA search is
-#'     interrupted.
-#' @param names a vector of character strings providing the names of decision variables.
-#' @param suggestions a matrix of solutions strings to be included in the initial
-#'     population.
-#' @param optim a logical defaulting to FALSE determining whether or not a local search
-#'     using general-purpose optimisation algorithms should be used.
-#' @param optimArgs a list controlling the local search algorithm.
-#' @param keepBest a logical argument specifying if best solutions at each iteration
-#'     should be saved in a slot called bestSol.
-#' @param parallel An optional argument which allows to specify if the Genetic Algorithm
-#'     should be run sequentially or in parallel.
-#' @param monitor a logical or an R function which takes as input the current state of the
-#'     ga-class object and show the evolution of the search.
-#' @param seed an integer value containing the random number generator state.
-#'
-#' @return An object of class `ga-class`.
-#' @export
-#'
-#' @examples
-#' # Not Run
+# A revised version of genetic algorithms (R package `GA`) to allow for time series
+# generation.
+#
+# @param type the type of genetic algorithm to be run depending on the nature of decision
+#     variables.
+# @param fitness the fitness function, any allowable R function which takes as input an
+#     individual string representing a potential solution, and returns a numerical value
+#     describing its ``fitness``
+# @param ... additional arguments to be passed to the fitness function.
+# @param n Length of the time series to be generated.
+# @param min a vector of length equal to the decision variables providing the lower
+#     bounds of the search space in case of real-valued or permutation encoded
+#     optimizations.
+# @param max a vector of length equal to the decision variables providing the upper
+#     bounds of the search space in case of real-valued or permutation encoded
+#     optimizations.
+# @param nBits a value specifying the number of bits to be used in binary encoded
+#     optimizations.
+# @param population an R function for randomly generating an initial population.
+# @param selection an R function performing selection, i.e. a function which generates a
+#     new population of individuals from the current population probabilistically
+#     according to individual fitness.
+# @param crossover an R function performing crossover, i.e. a function which forms
+#     offsprings by combining part of the genetic information from their parents.
+# @param mutation an R function performing mutation, i.e. a function which randomly
+#     alters the values of some genes in a parent chromosome.
+# @param popSize the population size.
+# @param pcrossover the probability of crossover between pairs of chromosomes.
+# @param pmutation the probability of mutation in a parent chromosome.
+# @param elitism the number of best fitness individuals to survive at each generation.
+# @param updatePop If set at TRUE the first attribute attached to the value returned by
+#     the user-defined fitness function is used to update the population.
+# @param postFitness a user-defined function which, if provided, receives the current
+#     ga-class object as input, performs post fitness-evaluation steps, then returns an
+#     updated version of the object which is used to update the GA search.
+# @param maxiter the maximum number of iterations to run before the GA search is halted.
+# @param run the number of consecutive generations without any improvement in the best
+#     fitness value before the GA is stopped.
+# @param maxFitness the upper bound on the fitness function after that the GA search is
+#     interrupted.
+# @param names a vector of character strings providing the names of decision variables.
+# @param suggestions a matrix of solutions strings to be included in the initial
+#     population.
+# @param optim a logical defaulting to FALSE determining whether or not a local search
+#     using general-purpose optimisation algorithms should be used.
+# @param optimArgs a list controlling the local search algorithm.
+# @param keepBest a logical argument specifying if best solutions at each iteration
+#     should be saved in a slot called bestSol.
+# @param parallel An optional argument which allows to specify if the Genetic Algorithm
+#     should be run sequentially or in parallel.
+# @param monitor a logical or an R function which takes as input the current state of the
+#     ga-class object and show the evolution of the search.
+# @param seed an integer value containing the random number generator state.
+#
+# @return An object of class `ga-class`.
+#
 ga_ts <- function(type = c("binary", "real-valued", "permutation"),
                   fitness, ..., n,
                   min, max, nBits,
@@ -86,10 +83,9 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
                   parallel = FALSE,
                   monitor = if (interactive()) {
                     if (shiny::is.RStudio()) gaMonitor else FALSE
-                  }
-                  else {
+                  } else {
                     FALSE
-                  } ,
+                  },
                   seed = NULL) {
   call <- match.call()
 
@@ -121,8 +117,7 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
   if (is.numeric(pmutation)) {
     if (pmutation < 0 | pmutation > 1) {
       stop("If numeric probability of mutation must be between 0 and 1.")
-    }
-    else if (!is.function(population)) {
+    } else if (!is.function(population)) {
       stop("pmutation must be a numeric value in (0,1) or a function.")
     }
   }
@@ -132,41 +127,39 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
 
   # check GA search type
   switch(type,
-         "binary" = {
-           nBits <- as.vector(nBits)[1]
-           min <- max <- NA
-           nvars <- nBits
-         },
-         "real-valued" = {
-           min <- as.vector(min)
-           max <- as.vector(max)
-           nBits <- NA
-           if (length(min) != length(max)) {
-             stop("min and max must be vector of the same length!")
-           }
-           nvars <- length(max)
-         },
-         "permutation" = {
-           min <- as.vector(min)[1]
-           max <- as.vector(max)[1]
-           nBits <- NA
-           nvars <- length(seq(min, max))
-         }
+    "binary" = {
+      nBits <- as.vector(nBits)[1]
+      min <- max <- NA
+      nvars <- nBits
+    },
+    "real-valued" = {
+      min <- as.vector(min)
+      max <- as.vector(max)
+      nBits <- NA
+      if (length(min) != length(max)) {
+        stop("min and max must be vector of the same length!")
+      }
+      nvars <- length(max)
+    },
+    "permutation" = {
+      min <- as.vector(min)[1]
+      max <- as.vector(max)[1]
+      nBits <- NA
+      nvars <- length(seq(min, max))
+    }
   )
 
   # check suggestions
   if (is.null(suggestions)) {
     suggestions <- matrix(nrow = 0, ncol = nvars)
-  }
-  else {
+  } else {
     if (is.vector(suggestions)) {
       if (nvars > 1) {
         suggestions <- matrix(suggestions, nrow = 1)
       } else {
         suggestions <- matrix(suggestions, ncol = 1)
       }
-    }
-    else {
+    } else {
       suggestions <- as.matrix(suggestions)
     }
     if (nvars != ncol(suggestions)) {
@@ -191,8 +184,7 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
     if (any(optimArgs$method == c("L-BFGS-B", "Brent"))) {
       optimArgs$lower <- min
       optimArgs$upper <- max
-    }
-    else {
+    } else {
       optimArgs$lower <- -Inf
       optimArgs$upper <- Inf
     }
@@ -211,13 +203,12 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
   # Start parallel computing (if needed)
   parallel <- if (is.logical(parallel)) {
     if (parallel) startParallel(parallel) else FALSE
-  }
-  else {
+  } else {
     startParallel(parallel)
   }
   on.exit(if (parallel) {
     parallel::stopCluster(attr(parallel, "cluster"))
-  } )
+  })
   # define operator to use depending on parallel being TRUE or FALSE
   `%DO%` <- if (parallel && requireNamespace("doRNG", quietly = TRUE)) {
     doRNG::`%dorng%`
@@ -237,34 +228,34 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
   popTs <- matrix(NA, n, popSize)
 
   object <- new("ga",
-                call = call,
-                type = type,
-                min = min,
-                max = max,
-                nBits = nBits,
-                names = if (is.null(names)) character() else names,
-                popSize = popSize,
-                iter = 0,
-                run = 1,
-                maxiter = maxiter,
-                suggestions = suggestions,
-                population = matrix(),
-                popTs = matrix(),
-                elitism = elitism,
-                pcrossover = pcrossover,
-                pmutation = if (is.numeric(pmutation)) pmutation else NA,
-                fitness = Fitness,
-                summary = fitnessSummary,
-                bestSol = bestSol
+    call = call,
+    type = type,
+    min = min,
+    max = max,
+    nBits = nBits,
+    names = if (is.null(names)) character() else names,
+    popSize = popSize,
+    iter = 0,
+    run = 1,
+    maxiter = maxiter,
+    suggestions = suggestions,
+    population = matrix(),
+    popTs = matrix(),
+    elitism = elitism,
+    pcrossover = pcrossover,
+    pmutation = if (is.numeric(pmutation)) pmutation else NA,
+    fitness = Fitness,
+    summary = fitnessSummary,
+    bestSol = bestSol
   )
 
   # generate beginning population
   Pop <- matrix(as.double(NA), nrow = popSize, ncol = nvars)
   ng <- min(nrow(suggestions), popSize)
   if (ng > 0) # use suggestion if provided
-  {
-    Pop[1:ng, ] <- suggestions
-  }
+    {
+      Pop[1:ng, ] <- suggestions
+    }
   # fill the rest with a random population
   if (popSize > ng) {
     Pop[(ng + 1):popSize, ] <- population(object)[1:(popSize - ng), ]
@@ -278,7 +269,7 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
 
     # evalute fitness function (when needed)
     if (!parallel) {
-      for (i in seq_len(popSize))
+      for (i in seq_len(popSize)) {
         if (is.na(Fitness[i])) {
           fit <- fitness(Pop[i, ], ...)
           if (updatePop) {
@@ -287,8 +278,8 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
           Fitness[i] <- fit$value
           popTs[, i] <- fit$x
         }
-    }
-    else {
+      }
+    } else {
       Fitness0 <- foreach(i = seq_len(popSize)) %DO% {
         if (is.na(Fitness[i])) {
           fitness(Pop[i, ], ...)
@@ -321,8 +312,8 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
       if (optimArgs$poptim > runif(1)) { # perform local search from random selected solution
         # with prob proportional to fitness
         i <- sample(1:popSize,
-                    size = 1,
-                    prob = optimProbsel(Fitness, q = optimArgs$pressel)
+          size = 1,
+          prob = optimProbsel(Fitness, q = optimArgs$pressel)
         )
         # run local search
         opt <- try(suppressWarnings(
@@ -392,8 +383,7 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
       Pop <- sel$population
       Fitness <- sel$fitness
       popTs <- sel$popTs
-    }
-    else {
+    } else {
       sel <- sample(1:popSize, size = popSize, replace = TRUE)
       Pop <- object@population[sel, ]
       Fitness <- object@fitness[sel]
@@ -439,16 +429,16 @@ ga_ts <- function(type = c("binary", "real-valued", "permutation"),
 
     # elitism
     if (elitism > 0) # (elitism > 0 & iter > 1)
-    {
-      ord <- order(object@fitness, na.last = TRUE)
-      u <- which(!duplicated(PopSorted, MARGIN = 1))
-      Pop[ord[1:elitism], ] <- PopSorted[u[1:elitism], ]
-      Fitness[ord[1:elitism]] <- FitnessSorted[u[1:elitism]]
-      popTs[, ord[1:elitism]] <- popTsSorted[, u[1:elitism]]
-      object@population <- Pop
-      object@fitness <- Fitness
-      object@popTs <- popTs
-    }
+      {
+        ord <- order(object@fitness, na.last = TRUE)
+        u <- which(!duplicated(PopSorted, MARGIN = 1))
+        Pop[ord[1:elitism], ] <- PopSorted[u[1:elitism], ]
+        Fitness[ord[1:elitism]] <- FitnessSorted[u[1:elitism]]
+        popTs[, ord[1:elitism]] <- popTsSorted[, u[1:elitism]]
+        object@population <- Pop
+        object@fitness <- Fitness
+        object@popTs <- popTs
+      }
   }
 
   # if optim is required perform a local search from the best
@@ -629,8 +619,7 @@ print.summary.ga <- function(x, digits = getOption("digits"), ...) {
   message(paste("Fitness function value =", format(x$fitness, digits = digits), "\n"))
   if (nrow(x$solution) > 1) {
     message(paste("Solutions = \n"))
-  }
-  else {
+  } else {
     message(paste("Solution = \n"))
   }
   do.call(
@@ -665,37 +654,36 @@ plot.ga <- function(x, y, ylim, cex.points = 0.7,
   }
 
   plot(iters, summary[, 1],
-       type = "n", ylim = ylim,
-       xlab = "Generation", ylab = "Fitness value", ...
+    type = "n", ylim = ylim,
+    xlab = "Generation", ylab = "Fitness value", ...
   )
   if (is.final & is.function(grid)) {
     grid(equilogs = FALSE)
   }
   points(iters, summary[, 1],
-         type = ifelse(is.final, "o", "p"),
-         pch = pch[1], lty = lty[1], col = col[1], cex = cex.points
+    type = ifelse(is.final, "o", "p"),
+    pch = pch[1], lty = lty[1], col = col[1], cex = cex.points
   )
   points(iters, summary[, 2],
-         type = ifelse(is.final, "o", "p"),
-         pch = pch[2], lty = lty[2], col = col[2], cex = cex.points
+    type = ifelse(is.final, "o", "p"),
+    pch = pch[2], lty = lty[2], col = col[2], cex = cex.points
   )
   if (is.final) {
     polygon(c(iters, rev(iters)),
-            c(summary[, 4], rev(summary[, 1])),
-            border = FALSE, col = col[3]
+      c(summary[, 4], rev(summary[, 1])),
+      border = FALSE, col = col[3]
     )
-  }
-  else {
+  } else {
     title(paste("Iteration", object@iter), font.main = 1)
   }
   if (is.final & legend) {
     inc <- !is.na(col)
     legend("bottomright",
-           legend = c("Best", "Mean", "Median")[inc],
-           col = col[inc], pch = c(pch, NA)[inc],
-           lty = c(lty, 1)[inc], lwd = c(1, 1, 10)[inc],
-           pt.cex = c(rep(cex.points, 2), 2)[inc],
-           inset = 0.02
+      legend = c("Best", "Mean", "Median")[inc],
+      col = col[inc], pch = c(pch, NA)[inc],
+      lty = c(lty, 1)[inc], lwd = c(1, 1, 10)[inc],
+      pt.cex = c(rep(cex.points, 2), 2)[inc],
+      inset = 0.02
     )
   }
 

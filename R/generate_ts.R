@@ -1,5 +1,6 @@
 #' Generate time series from random parameter spaces of the mixture autoregressive (MAR) models.
 #'
+#' Deprecated function. Please use \code{\link{mar_model}()} and \code{\link{generate.mar}()} instead.
 #' Generate time series from random parameter spaces of the mixture autoregressive (MAR)
 #' models.
 #' @param n.ts number of time series to be generated.
@@ -16,7 +17,8 @@
 #' forecast::autoplot(x$N1$x)
 #' @references Wong, CS & WK Li (2000).
 #' @export
-generate_ts <- function(n.ts = 1, freq = 1, nComp = NULL, n = 120, output_format="list") {
+generate_ts <- function(n.ts = 1, freq = 1, nComp = NULL, n = 120, output_format = "list") {
+  warning("This function is deprecated. It is recommended you use model_mar() and simulate.mar() or generate.mar() instead.")
   count <- 1
   generated.mixture.data <- list()
   sigmas <- sample(c(1:5), 5, replace = TRUE)
@@ -110,17 +112,18 @@ generate_ts <- function(n.ts = 1, freq = 1, nComp = NULL, n = 120, output_format
   output <- if (output_format == "list") {
     generated.mixture.data
   } else if (output_format == "tsibble") {
-    x <-  generated.mixture.data
-    map(x,  ~ as_tsibble(.x$x))
+    x <- generated.mixture.data
+    map(x, ~ as_tsibble(.x$x))
   }
   return(output)
 }
 
 
 
-#' Generate mutiple seasonal time series from random parameter spaces of the mixture autoregressive (MAR) models.
+#' Generate multiple seasonal time series from random parameter spaces of the mixture autoregressive (MAR) models.
 #'
-#' Generate mutiple seasonal time series from random parameter spaces of the mixture autoregressive (MAR) models.
+#' Deprecated function. Please use \code{\link{mar_model}()} and \code{\link{generate.mar}()} instead.
+#' Generates multiple seasonal time series from random parameter spaces of the mixture autoregressive (MAR) models.
 #' @param seasonal.periods a vector of seasonal periods of the time series to be generated.
 #' @param n length of the generated time series.
 #' @param nComp number of mixing components when simulating time series using MAR models.
@@ -128,11 +131,12 @@ generate_ts <- function(n.ts = 1, freq = 1, nComp = NULL, n = 120, output_format
 #' @return a time series with multiple seasonal periods.
 #' @export
 #' @examples
-#' x <- generate_msts(seasonal.periods = c(7, 365), n = 800, nComp = 2, output_format= "list")
+#' x <- generate_msts(seasonal.periods = c(7, 365), n = 800, nComp = 2, output_format = "list")
 #' forecast::autoplot(x)
-generate_msts <- function(seasonal.periods = c(7, 365), n = 800, nComp = NULL,output_format="list") {
+generate_msts <- function(seasonal.periods = c(7, 365), n = 800, nComp = NULL, output_format = "list") {
+  warning("This function is deprecated. It is recommended you use model_mar() and simulate.mar() or generate.mar() instead.")
   x.list <- map(seasonal.periods, function(p) {
-    generate_ts(n.ts = 1, freq = p, n = n, nComp = nComp)$N1$x
+    suppressWarnings(generate_ts(n.ts = 1, freq = p, n = n, nComp = nComp)$N1$x)
   })
   names(x.list) <- paste0("Season", seasonal.periods)
   x.list[1:(length(x.list) - 1)] <- lapply(x.list[1:(length(x.list) - 1)], function(x) {
@@ -149,7 +153,7 @@ generate_msts <- function(seasonal.periods = c(7, 365), n = 800, nComp = NULL,ou
   output <- if (output_format == "list") {
     res
   } else if (output_format == "tsibble") {
-    as_tsibble(res)
+    tsibble::as_tsibble(res)
   }
   return(output)
 }

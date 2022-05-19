@@ -4,3 +4,6 @@
 ^LICENSE\.md$
 ^CRAN-RELEASE$
 ^\.github$
+README.Rmd
+vignettes/*_cache*
+vignettes/*_files*

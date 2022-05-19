@@ -1,3 +1,13 @@
+# gratis 1.0.0
+
+* Improved documentation
+* Added new functions for MAR simulation: mar_model(), simulate.mar()
+* Added ets_model() and arima_model() to randomly specify ETS and ARIMA models
+* Added generate.ets, generate.mar, and generate.Arima to return tsibbles
+* Added generate_target() and simulate_target() functions.
+* Deprecated generate_msts(), generate_ts(), and generate_ts_with_target().
+* Removed some redundant functions
+
 # gratis 0.2.1
 
 ## Improvements

@@ -40,13 +40,15 @@ should be run sequentially or in parallel.}
 A time-series object of class "ts" or "msts".
 }
 \description{
-Generating time series with controllable features.
+Deprecated function. Please use \code{\link{generate_target}()} instead.
 }
 \examples{
 library(tsfeatures)
-x <- generate_ts_with_target(n = 1, ts.length = 60, freq = 1, seasonal = 0,
-  features = c('entropy', 'stl_features'), selected.features = c('entropy', 'trend'),
-  target=c(0.6, 0.9),  parallel=FALSE)
+x <- generate_ts_with_target(
+  n = 1, ts.length = 60, freq = 1, seasonal = 0,
+  features = c("entropy", "stl_features"), selected.features = c("entropy", "trend"),
+  target = c(0.6, 0.9), parallel = FALSE
+)
 forecast::autoplot(x)
 }
 \author{

@@ -1,5 +1,7 @@
 #' Generating time series with controllable features.
 #'
+#' Deprecated function. Please use \code{\link{generate_target}()} instead.
+#'
 #' @param n number of time series to be generated.
 #' @param ts.length length of the time series to be generated.
 #' @param freq frequency of the time series to be generated.
@@ -14,12 +16,14 @@
 #' @author Yanfei Kang
 #' @examples
 #' library(tsfeatures)
-#' x <- generate_ts_with_target(n = 1, ts.length = 60, freq = 1, seasonal = 0,
-#'   features = c('entropy', 'stl_features'), selected.features = c('entropy', 'trend'),
-#'   target=c(0.6, 0.9),  parallel=FALSE)
+#' x <- generate_ts_with_target(
+#'   n = 1, ts.length = 60, freq = 1, seasonal = 0,
+#'   features = c("entropy", "stl_features"), selected.features = c("entropy", "trend"),
+#'   target = c(0.6, 0.9), parallel = FALSE
+#' )
 #' forecast::autoplot(x)
 #' @export
-generate_ts_with_target <- function(n, ts.length, freq, seasonal, features, selected.features, target, parallel=TRUE, output_format= "list") {
+generate_ts_with_target <- function(n, ts.length, freq, seasonal, features, selected.features, target, parallel = TRUE, output_format = "list") {
   ga_min <-
     if (seasonal == 0) {
       c(rep(0, 10))
@@ -39,13 +43,13 @@ generate_ts_with_target <- function(n, ts.length, freq, seasonal, features, sele
   evolved.ts <- c()
   while (ifelse(is.null(dim(evolved.ts)), 0 < 1, dim(evolved.ts)[2] < n)) {
     GA <- ga_ts(
-      type = "real-valued", fitness = gratis::fitness_ts, features = features, seasonal = seasonal,
+      type = "real-valued", fitness = fitness_ts, features = features, seasonal = seasonal,
       ts.length, freq, target, 3, selected.features,
       n = ts.length,
       min = ga_min,
       max = ga_max,
       parallel = parallel, popSize = 30, maxiter = 100,
-      pmutation = 0.3, pcrossover = 0.8, maxFitness = -sqrt(0.01*length(selected.features)),
+      pmutation = 0.3, pcrossover = 0.8, maxFitness = -sqrt(0.01 * length(selected.features)),
       run = 30, keepBest = TRUE, monitor = GA::gaMonitor
     )
     evolved.ts.new <-
@@ -60,11 +64,11 @@ generate_ts_with_target <- function(n, ts.length, freq, seasonal, features, sele
   } else {
     evolved.ts <- msts(evolved.ts[, 1:n], seasonal.periods = freq)
   }
-  # New content 
+  # New content
   output <- if (output_format == "list") {
     evolved.ts
   } else if (output_format == "tsibble") {
-    as_tsibble(evolved.ts)
+    tsibble::as_tsibble(evolved.ts)
   }
   return(output)
 }
